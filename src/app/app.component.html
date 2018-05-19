@@ -1,9 +1,85 @@
+<mat-toolbar id="header" *ngIf="headerShow" color="primary">
+  <div class="float-left">
+    <button style="font-size: 22px;" mat-button>Plotters Quiz</button>
+  </div>
+  <div style="right: 0;position: absolute;margin-right: 200px;" class="float-right">
+    <mat-form-field style="font-size: 14px;margin-top: 20px;">
+      <mat-select  [formControl]="disableSelect" placeholder="Technology" [(value)]="technologyName">
+          <mat-option (click)="TriggerValue()">None</mat-option>
+        <mat-option (click)="resetBackView()" *ngFor="let technology of technologies" [value]="technology.value">
+          {{ technology.viewValue }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field> 
+  </div>
+  <div  style="right: 0;position: absolute;margin-right: 10px;" class="float-right">
+    <mat-form-field  style="font-size: 14px;margin-top: 20px;">
+      <mat-select [disabled]="!disableSelect.value" placeholder="Rounds" [(value)]="roundName">
+          <mat-option (click)="resetBackView()" >None</mat-option>
+        <mat-option (click)="roundSelected()" *ngFor="let round of rounds" [value]="round.name">
+          {{ round.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div (click)="goBack()" *ngIf="backToView" class="backButton">Back To Team View</div>
+</mat-toolbar>
+<mat-toolbar *ngIf="teamHeaderShow" id="teamHeader"  color="primary">
+    <div style="padding: 16px;margin-left: -15px;background-color: #F44336;" >
+        <div style="color: white" mat-button>{{technologyName}} | {{roundName}}</div>
+      </div>
+      <div style="margin-left: 30px;">
+          <mat-form-field  style="font-size: 14px;margin-top: 20px;">
+          <mat-select  placeholder="Quetion To" [(value)]="teamName">
+              <mat-option  >None</mat-option>
+            <mat-option  *ngFor="let team of teams" [value]="team.name">
+              {{ team.name }}
+            </mat-option>
+          </mat-select>
+          </mat-form-field> 
+      </div>
+      <div style="margin: 19%">
+          <button style="font-size: 22px;"  mat-button>Plotters Quiz</button>
+        </div>
+      <div  style="right: 0;position: absolute;margin-right: 10px;" class="float-right">
+          <i style="cursor: pointer;color: white" (click)="ShowHeader()" class="fas fa-bars"></i>
+      </div>
+</mat-toolbar>
+<app-home [dataSet]="roundName"></app-home> 
+<div *ngIf="roundName?.length > 0" class="settings">
+    <div class="settings-inner">
+       <div (click)="showTeamdashboard()" class="settings-ctrl">
+          <i class="fas fa-trophy"></i>
+       </div>
+       <div class="settings-content">
+         <div style="text-align: center;
+         background-color: #F44336;
+         color: white;
+         padding: 1px;
+         font-size: 28px;">
+            <p style="margin-top: 4px;">{{ technologyName}} Points Table</p>
+         </div>
+          <div class="setting-colors">
+             <table class="table table-hover">
+               <thead>
+                 <tr>
+                   <th>Position</th>
+                   <th>Team Name</th>
+                   <th>Points</th>
+                 </tr>
+               </thead>
+               <tbody>
+                 <tr *ngFor="let teamList of teams | orderBy: order : reverse ;let i = index">
+                   <td>{{i+1}}</td>
+                   <td>{{teamList.name}}</td>
+                   <td>{{teamList.points}}</td>
+                 </tr>
+               </tbody>
+             </table>
+          </div>
+       </div>
+    </div>
+ </div>
+ 
 
-
-<p>
-    <ngb-alert [dismissible]="false">
-      <strong>Warning!</strong> Better check yourself, you're not looking too good.
-    </ngb-alert>
-  </p>
-
-  <button mat-button>Click me!</button>
+ 

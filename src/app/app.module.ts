@@ -8,19 +8,25 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { environment } from '../environments/environment';
 import {
   MatButtonModule, 
-  MatCheckboxModule
-
+  MatCheckboxModule,
+  MatToolbarModule,
+  MatCardModule,
+  MatSelectModule,
+  MatRadioModule,
+  MatDialogModule
 } 
 from '@angular/material';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HomeComponent } from './home/home.component';
-
+import { OrderModule } from 'ngx-order-pipe';
+import { QuestionComponent } from './home/question.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    QuestionComponent
   ],
   imports: [
     NgbModule.forRoot(),
@@ -28,12 +34,20 @@ import { HomeComponent } from './home/home.component';
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule, 
     CommonModule,
+    OrderModule,
     FormsModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
     MatButtonModule,
+    MatSelectModule,
+    MatCardModule,
+    MatDialogModule,
+    MatRadioModule,
     MatCheckboxModule,
+    MatToolbarModule  
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [QuestionComponent]
 })
 export class AppModule { }
