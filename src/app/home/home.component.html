@@ -1,7 +1,7 @@
 <div *ngIf="dataSet?.length > 0" style="margin-top: 20px" class="container-fluid">
     <div class="row">
-        <div style="margin-bottom: 20px;" *ngFor="let question of Questions;let i = index" class="col-lg-2">
-            <mat-card  (click)="openDialog(i)" class="zoom" style="background-color: #2196F3; color: white;height: 100px;cursor: pointer">
+        <div  style="margin-bottom: 20px;" *ngFor="let question of questions | answered: questions    ;let i = index" class="col-lg-2">
+            <mat-card [ngStyle]="{'background-color': !question.answered  ? '#2196F3' : '#9E9E9E' }"  (click)="openDialog(question.id)" class="zoom" style=" color: white;height: 100px;cursor: pointer">
                <div style="    text-align: center;margin-top: -18px;">
                    <h1 style="font-size: 79px;">{{question.id}}</h1>
                </div>

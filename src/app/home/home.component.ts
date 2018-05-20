@@ -9,44 +9,11 @@ import { QuestionComponent } from './question.component';
 })
 export class HomeComponent implements OnInit {
 @Input() dataSet: string ;
-  public Questions:Array<object> = [
-    { id: 1, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 2, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 3, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 4, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 5, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 6, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 7, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 8, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 9, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 10, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 11, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 12, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 13, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 14, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 15, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 16, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 17, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 18, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 19, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 20, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 21, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 22, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 23, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 24, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 25, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 26, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 27, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 28, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 29, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 30, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 31, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 32, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-    { id: 33, question : "What is your name ?", options : ['alpha','beta','gamma','tesla'], answer : 'alpha', point : 20},
-
-  ]
-
-  constructor(private dialog: MatDialog) {}
+@Input() questions: any;
+@Input() teamName:any;
+@Input() teams:any;
+@Input() teamIndex:any;
+constructor(private dialog: MatDialog) {}
 
   ngOnInit() {  
   }
@@ -57,7 +24,11 @@ export class HomeComponent implements OnInit {
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
 
-    dialogConfig.data = this.Questions[index];
+    dialogConfig.data = this.questions[index-1];
+    dialogConfig.data.teams = this.teams;
+    dialogConfig.data.teamName = this.teamName;
+    dialogConfig.data.teamIndex = this.teamIndex;
+
 
     this.dialog.open(QuestionComponent, dialogConfig);
 }
