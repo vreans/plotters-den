@@ -1,92 +1,119 @@
 import { Component } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import {FormControl} from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import * as $ from 'jquery';
+import { AngularFireDatabase, AngularFireList, AngularFireObject } from 'angularfire2/database';
+import { Observable } from 'rxjs';
+import { DatapushService } from './home/datapush.service';
+
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  public technologyName ;
-  public roundName ;
-  public headerShow : boolean = true;
-  public teamHeaderShow : boolean = false;
+  public technologyName;
+  public roundName;
+  public teamName;
+  backendData: any;
+  items: Observable<any[]>;
+  public headerShow: boolean = true;
+  public teamHeaderShow: boolean = false;
   public backToView: boolean = false;
+  public teamsBackend:any;
   public order: string = "points";
-  public reverse:boolean = true;
+  teamIndex: any;
+  public questions: any;
+  public reverse: boolean = true;
   disableSelect = new FormControl(false);
+  dbrecord: AngularFireObject<any>;
+    public technologies: Array<any>;
+  public rounds: Array<object>;
+  public teams: Array<object>;
 
-  public technologies: Array<object> = [
-    {value: 'java/UI', viewValue: 'Java/Javascript'},
-    {value: '.net', viewValue: '.Net'},
-    {value: 'iseries', viewValue: 'Iseries'}
-  ];
-  public rounds:Array<object> =  [
-    {
-      name : "Round 1",
-      questions: 20
-    },
-    {
-      name : "Round 2",
-      questions: 20
-    },
-    {
-      name : "Round 3",
-      questions: 20
-    },
-    {
-      name : "Round 4",
-      questions: 20
-    },
-    {
-      name : "Round 5",
-      questions: 20
-    },
-  ];
-  public teams:Array<object> = [
-    {name:"Chennai Super Kings",points:20},
-    {name:"Delhi Daredevils",points:60},
-    {name:"Kings XI Punjab",points:46},
-    {name:"Mumbai Indians",points:36},
-    {name : "Royal Challengers Banglore",points:45},
-    {name:"Rajastan Royals",points:75},
-    {name:"Kolkata Knight Riders" ,points:90},
-    {name:"Sunrisers Hydrabad",points:20}
-  ];
-
-  constructor(){
+  constructor(public db: AngularFireDatabase, public datapushservice: DatapushService) {
+    this.datapushservice.bSubject.subscribe(result => {
+      this.processDataforbackendpush(result);
+    })
+    this.items = this.db.list('/').valueChanges();
+   
+    this.items.forEach(data => {
+      this.backendData = data;
+      this.ProcessData();
+    })
   }
+  processDataforbackendpush(data) {
+    if (data != 'data') {
+      let i;
+      console.log(data);
+      delete data.question['teams'];
+      let questionNumber = data.question.id;
+      console.log(this.technologyName);
+      console.log(this.roundName);
+      if (this.technologyName == 'JavaUI') {
+        i = 0
+      }
+      if (this.technologyName == 'Iseries') {
+        i = 1;
+      }
+      if(this.technologyName == 'dotnet')
+      {
+        i =2;
+      }
+      this.dbrecord = this.db.object('/rounds/'+i+'/Questions/'+this.roundName+'/'+(questionNumber-1));
+      console.log(this.backendData[0][i].Questions[this.roundName][questionNumber+1]);
+      this.teamsBackend = this.db.object('/rounds/'+i+'/teams/');
+      this.dbrecord.set(data.question);
+      this.teamsBackend.set(data.teams);
+    }
 
-  showTeamdashboard(){
+  }
+  ProcessData() {
+    console.log(this.backendData);
+    this.technologies = this.backendData[2];
+
+  }
+  showTeamdashboard() {
     var settings = $('.settings');
-      settings.toggleClass('show');
+    settings.toggleClass('show');
   }
+  teamIndexCall(i) {
+    this.teamIndex = i;
+  }
+  TriggerValue() {
+    this.roundName = '';
+  }
+  roundSelected() {
+    var teamDetails = this.backendData[0];
+    for (let j = 0; j < teamDetails.length; j++) {
+      if (teamDetails[j].name == this.technologyName) {
+        this.teams = teamDetails[j].teams;
+        this.questions = teamDetails[j].Questions[this.roundName];
+        console.log(this.questions);
+      }
+    }
 
-  TriggerValue(){
-this.roundName = '';
+    this.goBack();
   }
-  roundSelected(){
- //   this.backToView = false
-    console.log(this.technologyName);
-this.goBack();
-  }
-  ShowHeader(){
+  ShowHeader() {
     $('#header').fadeIn(400);
     $('#teamHeader').fadeOut(400);
     this.headerShow = true;
     this.teamHeaderShow = false;
     this.backToView = true;
   }
-  goBack(){
+  goBack() {
     $('#header').fadeOut(400);
     $('#teamHeader').fadeIn(400);
     this.headerShow = false;
     this.teamHeaderShow = true;
     this.backToView = false;
   }
-  resetBackView()
-  {
+  resetBackView(technology) {
+    var tech = technology;
+    this.rounds = this.backendData[3][tech];
+    console.log(this.rounds);
     this.backToView = false;
 
   }

@@ -1,13 +1,13 @@
 <mat-toolbar id="header" *ngIf="headerShow" color="primary">
   <div class="float-left">
-    <button style="font-size: 22px;" mat-button>Plotters Quiz</button>
+    <button (click)="getData()" style="font-size: 22px;" mat-button>Plotters Quiz</button>
   </div>
   <div style="right: 0;position: absolute;margin-right: 200px;" class="float-right">
     <mat-form-field style="font-size: 14px;margin-top: 20px;">
       <mat-select  [formControl]="disableSelect" placeholder="Technology" [(value)]="technologyName">
           <mat-option (click)="TriggerValue()">None</mat-option>
-        <mat-option (click)="resetBackView()" *ngFor="let technology of technologies" [value]="technology.value">
-          {{ technology.viewValue }}
+        <mat-option (click)="resetBackView(technology)" *ngFor="let technology of technologies" [value]="technology">
+          {{ technology }}
         </mat-option>
       </mat-select>
     </mat-form-field> 
@@ -16,8 +16,8 @@
     <mat-form-field  style="font-size: 14px;margin-top: 20px;">
       <mat-select [disabled]="!disableSelect.value" placeholder="Rounds" [(value)]="roundName">
           <mat-option (click)="resetBackView()" >None</mat-option>
-        <mat-option (click)="roundSelected()" *ngFor="let round of rounds" [value]="round.name">
-          {{ round.name }}
+        <mat-option (click)="roundSelected()" *ngFor="let round of rounds" [value]="round">
+          {{ round }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -32,7 +32,7 @@
           <mat-form-field  style="font-size: 14px;margin-top: 20px;">
           <mat-select  placeholder="Quetion To" [(value)]="teamName">
               <mat-option  >None</mat-option>
-            <mat-option  *ngFor="let team of teams" [value]="team.name">
+            <mat-option (click)="teamIndexCall(j)"  *ngFor="let team of teams;let j = index" [value]="team.name">
               {{ team.name }}
             </mat-option>
           </mat-select>
@@ -45,7 +45,7 @@
           <i style="cursor: pointer;color: white" (click)="ShowHeader()" class="fas fa-bars"></i>
       </div>
 </mat-toolbar>
-<app-home [dataSet]="roundName"></app-home> 
+<app-home [teamIndex]="teamIndex" [teams]="teams" [teamName]="teamName" [questions]="questions" [dataSet]="roundName"></app-home> 
 <div *ngIf="roundName?.length > 0" class="settings">
     <div class="settings-inner">
        <div (click)="showTeamdashboard()" class="settings-ctrl">

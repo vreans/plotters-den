@@ -6,6 +6,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { environment } from '../environments/environment';
+import { AngularFireStorageModule } from 'angularfire2/storage';
 import {
   MatButtonModule, 
   MatCheckboxModule,
@@ -21,18 +22,24 @@ import { CommonModule } from '@angular/common';
 import { HomeComponent } from './home/home.component';
 import { OrderModule } from 'ngx-order-pipe';
 import { QuestionComponent } from './home/question.component';
+import { AngularFireDatabase, AngularFireDatabaseModule } from 'angularfire2/database';
+import { DatapushService } from './home/datapush.service';
+import { AnsweredPipe } from './home/answered.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    QuestionComponent
+    QuestionComponent,
+    AnsweredPipe
   ],
   imports: [
     NgbModule.forRoot(),
     BrowserModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule, 
+    AngularFireStorageModule,
+    AngularFireDatabaseModule,
     CommonModule,
     OrderModule,
     FormsModule,
@@ -46,7 +53,7 @@ import { QuestionComponent } from './home/question.component';
     MatCheckboxModule,
     MatToolbarModule  
   ],
-  providers: [],
+  providers: [DatapushService],
   bootstrap: [AppComponent],
   entryComponents: [QuestionComponent]
 })

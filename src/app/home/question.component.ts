@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Inject } from '@angular/core';
 import { MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { DatapushService } from './datapush.service';
+import { AngularFireStorage } from 'angularfire2/storage';
 
 @Component({
   selector: 'app-question',
@@ -18,12 +19,15 @@ width: 28%;">
 </mat-form-field> 
 </div>
 <mat-dialog-content>
- <h5 style="font-size:40px">{{data.id}}, {{data.question
+ <h5 [ngStyle]="{ 'font-size' : data.questionFontSize + 'px'}" >{{data.id}}, {{data.question
  }}</h5>
+ <div style="width:100px;heigth:100px">
+ <img [src]="questionUrl | async" />
+ </div>
 <br>
 <div>
-<mat-radio-group class="example-radio-group" [(ngModel)]="SelectedAnswer" style="font-size: 34px;">
-  <mat-radio-button class="example-radio-button"  *ngFor="let option of data.options" [value]="option">{{option}}</mat-radio-button>
+<mat-radio-group class="example-radio-group" [(ngModel)]="SelectedAnswer" >
+  <mat-radio-button [ngStyle]="{ 'font-size' : data.optionFontSize + 'px'}" class="example-radio-button"  *ngFor="let option of data.options" [value]="option"><label style="white-space:normal">{{option}}</label></mat-radio-button>
 </mat-radio-group>
 </div>
 <div [ngStyle]="{'background-color': showCorrect  ? '#4CAF50' : '#F44336' }" *ngIf="showCorrect || showIncorrect " style="position: absolute;
@@ -68,8 +72,10 @@ export class QuestionComponent implements OnInit {
   data: any;
   teams: any;
   CountDown:any;
+  optionUrl:any;
   teamName: any;
   teamIndex:any;
+  questionUrl:any;
   showCorrect: boolean = false;
   showIncorrect: boolean = false;
   SelectedAnswer: any;
@@ -79,8 +85,26 @@ export class QuestionComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<QuestionComponent>,
     @Inject(MAT_DIALOG_DATA) data,
-    public dataPushservice: DatapushService) {
+    public dataPushservice: DatapushService,
+    private storage: AngularFireStorage) {
     this.data = data;
+    if(this.data.questionURL != "none")
+    {
+      const ref = this.storage.ref(this.data.questionURL[0]);
+      this.questionUrl = ref.getDownloadURL();
+      console.log(this.questionUrl);
+    }
+    if(this.data.optionURL != "none")
+    {
+      this.optionUrl = [];
+      for(let j=0;j < this.data.optionURL.length; j++)
+      {
+        let ref = this.storage.ref(this.data.optionURL[j]);
+        this.optionUrl[j] = ref.getDownloadURL();
+      }
+      console.log(this.optionUrl);
+  
+    }
     this.data.answered = false;
     this.teamName = data.teamName;
     this.teams = data.teams;
