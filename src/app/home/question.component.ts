@@ -19,15 +19,20 @@ width: 28%;">
 </mat-form-field> 
 </div>
 <mat-dialog-content>
- <h5 [ngStyle]="{ 'font-size' : data.questionFontSize + 'px'}" >{{data.id}}, {{data.question
+ <h5  [ngStyle]="{ 'font-size' : data.questionFontSize + 'px'}" >{{data.id}}, {{data.question
  }}</h5>
- <div style="width:100px;heigth:100px">
+ <div *ngIf="questionUrl" style="width:100px;heigth:100px">
  <img [src]="questionUrl | async" />
  </div>
 <br>
-<div>
+<div *ngIf="!optionUrl">
 <mat-radio-group class="example-radio-group" [(ngModel)]="SelectedAnswer" >
   <mat-radio-button [ngStyle]="{ 'font-size' : data.optionFontSize + 'px'}" class="example-radio-button"  *ngFor="let option of data.options" [value]="option"><label style="white-space:normal">{{option}}</label></mat-radio-button>
+</mat-radio-group>
+</div>
+<div *ngIf="optionUrl">
+<mat-radio-group  [(ngModel)]="SelectedAnswer" >
+  <mat-radio-button style="margin-right:10px;" [ngStyle]="{ 'font-size' : data.optionFontSize + 'px'}"   *ngFor="let option of optionUrl;let i = index" [value]="i"><img [src]="option | async" /></mat-radio-button>
 </mat-radio-group>
 </div>
 <div [ngStyle]="{'background-color': showCorrect  ? '#4CAF50' : '#F44336' }" *ngIf="showCorrect || showIncorrect " style="position: absolute;
@@ -109,7 +114,17 @@ export class QuestionComponent implements OnInit {
     this.teamName = data.teamName;
     this.teams = data.teams;
     this.teamIndex = data.teamIndex;
-    this.setTime();
+    if(this.data.questionURL != "none" || this.data.optionURL != "none")
+    {
+    setTimeout(() => {
+      this.setTime();
+    }, 2000);
+    }
+    else
+    {
+      this.setTime();
+    }
+
   }
 
   setTime() {
@@ -129,6 +144,55 @@ export class QuestionComponent implements OnInit {
     this.teamIndex = id;
   }
   validateAnswer(){
+    if(this.optionUrl)
+    {
+      var answerSelected;
+      console.log(this.SelectedAnswer);
+      if(this.SelectedAnswer == 0)
+      {
+answerSelected = 'A';
+      }
+            if(this.SelectedAnswer == 1)
+      {
+answerSelected = 'B';
+      }
+            if(this.SelectedAnswer == 2)
+      {
+answerSelected = 'C';
+      }
+            if(this.SelectedAnswer == 3)
+      {
+answerSelected = 'D';
+      }
+          this.Counter = 0;
+    clearInterval(this.CountDown);
+    $('.mat-dialog-container').css('background-color','#464646');
+    $('.mat-dialog-container').css('color','white');
+    if(answerSelected == this.data.answer)
+    {
+      this.showCorrect = true;
+      this.showIncorrect = false;
+      this.teams[this.teamIndex].points = this.teams[this.teamIndex].points + this.data.points ;
+      this.data.answeredBy = this.teams[this.teamIndex].shortName;
+      this.data.answered = true;
+      this.data.teamName = this.teamName;
+      this.data.teamIndex = this.teamIndex;
+      console.log(this.teams);
+      console.log(this.data);
+      this.dataPushservice.updateBackendValue(this.teams,this.data);
+    }
+    else
+    {
+      this.showIncorrect = true;
+      this.showCorrect = false;
+      this.data.answeredBy = 'Computer'
+      this.data.answered = true;
+      this.dataPushservice.updateBackendValue(this.teams,this.data);
+
+    }
+    }
+    else
+    {
     this.Counter = 0;
     clearInterval(this.CountDown);
     $('.mat-dialog-container').css('background-color','#464646');
@@ -155,6 +219,8 @@ export class QuestionComponent implements OnInit {
       this.dataPushservice.updateBackendValue(this.teams,this.data);
 
     }
+    }
+
   }
   save() {
     this.dialogRef.close();
